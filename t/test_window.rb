@@ -3,7 +3,7 @@
 require "minitest"
 require "./xdo_test_helper"
 
-class XdotoolWindowTests < MiniTest::Test
+class XdotoolWindowTests < Minitest::Test
   include XdoTestHelper
 
   def setup
