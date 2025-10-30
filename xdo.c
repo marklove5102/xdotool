@@ -1436,6 +1436,8 @@ static void _xdo_populate_charcode_map(xdo_t *xdo) {
       //
       // So if there's no entry for a specific modifier mask, then that modmask
       // means shift level 1 aka Base
+      //
+      // And if we don't find any entry with 0 modmask, then we need to add one.
       if (!modmask0found) {
         KeySym keysym = XkbKeycodeToKeysym(dpy, keycode, group, 0);
 
