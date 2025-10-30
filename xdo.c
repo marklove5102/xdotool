@@ -1073,7 +1073,8 @@ int xdo_send_keysequence_window_list_do(const xdo_t *xdo, Window window, charcod
   for (i = 0; i < nkeys; i++) {
     if (keys[i].needs_binding == 1) {
       KeySym keysym_list[] = { keys[i].symbol };
-      _xdo_debug(xdo, "Mapping sym %lu to %d", keys[i].symbol, scratch_keycode);
+      const char *text = XKeysymToString(keys[i].symbol);
+      _xdo_debug(xdo, "Mapping sym %lu (%s) to %d", keys[i].symbol, text, scratch_keycode);
       XChangeKeyboardMapping(xdo->xdpy, scratch_keycode, 1, keysym_list, 1);
       XSync(xdo->xdpy, False);
       /* override the code in our current key to use the scratch_keycode */
