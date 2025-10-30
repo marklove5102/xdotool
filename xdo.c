@@ -133,6 +133,10 @@ xdo_t* xdo_new_with_opened_display(Display *xdpy, const char *display,
     xdo->quiet = True;
   }
 
+  if (getenv("DEBUG")) {
+    xdo->debug = True;
+  }
+
   if (_xdo_has_xtest(xdo)) {
     xdo_enable_feature(xdo, XDO_FEATURE_XTEST);
     _xdo_debug(xdo, "XTEST enabled.");
