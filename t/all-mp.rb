@@ -71,13 +71,11 @@ rescue Errno::ENOENT => e
 end
 
 def run(x, wm, test_file)
-  puts "Run: #{test_file}"
-  parent_pid = $$
-
-  ractor = Ractor.new(x, wm, test_file) do |x, wm, test_file|
-    env = {
-      "LD_LIBRARY_PATH" => File.join(__dir__, "..")
-    }
+  
+  return Ractor.new(x, wm, test_file) do |x, wm, test_file|
+    puts "Run: #{test_file}"
+    env = {}
+    env["LD_LIBRARY_PATH"] = File.join(__dir__, "..")
 
     begin
       xpid, display = xserver(x)
@@ -88,8 +86,7 @@ def run(x, wm, test_file)
         :in => "/dev/null",
       }
 
-      args = ["ruby", "-r", test_file, "-e", "exit(Minitest.run)"]
-
+      args = ["ruby", "-r", test_file, "-e", "exit(Minitest.run(['--verbose']))"]
       pid = Process::spawn(env, *args, options)
       _, status = Process.wait2(pid)
       status.exitstatus
@@ -112,12 +109,13 @@ end
 begin
   pids = files.collect { |file| [file, run(x, wm, file)] }
 
-  pids.each do |file, child|
-    result = child.take
-    p file => result
+  pids.collect { |file, child| [file, child.take] }.each do |file, result|
+    if result == 0
+      puts "pass: #{file}"
+    else
+      puts "fail: #{file}"
+    end
   end
-rescue => e
-  raise
 ensure
   # Clean up any stranded processes.
   puts "Exiting -- Cleaning up all subprocesses"
